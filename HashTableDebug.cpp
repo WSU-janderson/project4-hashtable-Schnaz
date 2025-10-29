@@ -1,7 +1,10 @@
 /**
  * HashTableDebug.cpp
+ * Project 4 - Hash Table
+ * CS 3100 - Adam Hume
  *
- * Write your tests in this file
+ * This is the file that is to be run for the purposes of debugging.
+ * It will be built separately from HashTableTests, so code here is explicitly for debugging
  */
 #include <iostream>
 
