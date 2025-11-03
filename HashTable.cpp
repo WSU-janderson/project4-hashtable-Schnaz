@@ -10,36 +10,36 @@
 #include "HashTable.h"
 
 
-/**
+/*
 * The default constructor can simply set the bucket type to ESS.
 *
 */
-HashTableBucket::HashTableBucket() {int x = 5;
+HashTableBucket::HashTableBucket() {
+
 }
 
-/**
+/*
 * A parameterized constructor could initialize the key and value, as
 * well as set the bucket type to NORMAL.
 */
 HashTableBucket::HashTableBucket(const string &key, const size_t &value) {
 }
 
-/**
+/*
 * A load method could load the key-value pair into the bucket, which
 * should then also mark the bucket as NORMAL.
 */
 void HashTableBucket::load(const std::string &key, const size_t &value) {
-
 }
 
-/**
+/*
 * This method would return whether the bucket is empty, regardless of
 * if it has had data placed in it or not.
 */
 bool HashTableBucket::isEmpty() const {
 }
 
-/**
+/*
 * The stream insertion operator could be overloaded to print the
 * bucket's contents. Or if preferred, you could write a print method
 * instead.
@@ -47,14 +47,14 @@ bool HashTableBucket::isEmpty() const {
 ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
 }
 
-/**
+/*
 * Only a single constructor that takes an initial capacity for the table is
 * necessary. If no capacity is given, it defaults to 8 initially
 */
 HashTable::HashTable(size_t initCapacity) {
 }
 
-/**
+/*
 * Insert a new key-value pair into the table. Duplicate keys are NOT allowed. The
 * method should return true if the insertion was successful. If the insertion was
 * unsucessful, such as when a duplicate is attempted to be inserted, the method
@@ -63,21 +63,21 @@ HashTable::HashTable(size_t initCapacity) {
 bool HashTable::insert(const string &key, const size_t &value) {
 }
 
-/**
+/*
 * If the key is in the table, remove will “erase” the key-value pair from the
 * table. This might just be marking a bucket as empty-after-remove
 */
 bool HashTable::remove(const string &key) {
 }
 
-/**
+/*
 * contains returns true if the key is in the table and false if the key is not in
 * the table.
 */
 bool HashTable::contains(const string &key) const {
 }
 
-/**
+/*
 * If the key is found in the table, find will return the value associated with
 * that key. If the key is not in the table, find will return something called
 * nullopt, which is a special value in C++. The find method returns an
@@ -89,7 +89,7 @@ bool HashTable::contains(const string &key) const {
 optional<size_t> HashTable::get(const string &key) const {
 }
 
-/**
+/*
 * The bracket operator lets us access values in the map using a familiar syntax,
 * similar to C++ std::map or Python dictionaries. It behaves like get, returnin
 * the value associated with a given key:
@@ -106,7 +106,7 @@ optional<size_t> HashTable::get(const string &key) const {
 size_t &HashTable::operator[](const string &key) {
 }
 
-/**
+/*
 * keys returns a std::vector (C++ version of ArrayList, or simply list/array)
 * with all of the keys currently in the table. The length of the vector should be
 * the same as the size of the hash table.
@@ -114,7 +114,7 @@ size_t &HashTable::operator[](const string &key) {
 vector<string> HashTable::keys() const {
 }
 
-/**
+/*
 * alpha returns the current load factor of the table, or size/capacity. Since
 * alpha returns a double,make sure to properly cast the size and capacity, which
 * are size_t, to avoid size_teger division. You can cast a size_t num to a double
@@ -126,21 +126,21 @@ vector<string> HashTable::keys() const {
 double HashTable::alpha() const {
 }
 
-/**
+/*
 * capacity returns how many buckets in total are in the hash table. The time
 * complexity for this algorithm must be O(1).
 */
 size_t HashTable::capacity() const {
 }
 
-/**
+/*
 * The size method returns how many key-value pairs are in the hash table. The
 * time complexity for this method must be O(1)
 */
 size_t HashTable::size() const {
 }
 
-/**
+/*
 * operator<< is another example of operator overloading in C++, similar to
 * operator[]. The friend keyword only needs to appear in the class declaration,
 * but not the definition. In addition, operator<< is not a method of HashTable,
