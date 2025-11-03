@@ -6,3 +6,41 @@
  * This is the header file for the HashTable class. It contains the variable and function
  * declarations, both public and private.
  */
+
+#ifndef PROJECT4_SEQUENCE_H
+#define PROJECT4_SEQUENCE_H
+#include <string>
+#include <vector>
+#include <optional>
+using namespace std;
+
+class HashTableBucket {
+private:
+
+public:
+    HashTableBucket();
+    HashTableBucket(const string& key, const size_t& value);
+    void load(const std::string& key, const size_t& value);
+    bool isEmpty() const;
+    friend ostream& operator<<(ostream& os, const HashTableBucket& bucket);
+
+};
+class HashTable {
+private:
+
+public:
+    HashTable(size_t initCapacity = 8);
+    bool insert(const string& key, const size_t& value);
+    bool remove(const string& key);
+    bool contains(const string& key) const;
+    optional<size_t> get(const string& key) const;
+    size_t& operator[](const string& key);
+    vector<string> keys() const;
+    double alpha() const;
+    size_t capacity() const;
+    size_t size() const;
+    friend ostream& operator<<(ostream& os, const HashTable& hashTable);
+
+};
+
+#endif //PROJECT3_SEQUENCE_H
