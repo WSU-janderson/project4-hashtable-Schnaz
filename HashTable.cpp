@@ -1,20 +1,21 @@
 /**
- * HashTable.cpp
- * Project 4 - Hash Table
- * CS 3100 - Adam Hume
- *
- * This is the class file for the HashTable class. This file contains all the implementation
- * for the functions within the HashTable header file.
- */
+* HashTable.cpp
+* Project 4 - Hash Table
+* CS 3100 - Adam Hume
+*
+* This is the class file for the HashTable class. This file contains all the implementation
+* for the functions within the HashTable header file.
+*/
 
 #include "HashTable.h"
 
 
 /**
- * The default constructor can simply set the bucket type to ESS.
- *
- */
-HashTableBucket::HashTableBucket() {}
+* The default constructor can simply set the bucket type to ESS.
+*
+*/
+HashTableBucket::HashTableBucket() {int x = 5;
+}
 
 /**
 * A parameterized constructor could initialize the key and value, as
@@ -28,6 +29,7 @@ HashTableBucket::HashTableBucket(const string &key, const size_t &value) {
 * should then also mark the bucket as NORMAL.
 */
 void HashTableBucket::load(const std::string &key, const size_t &value) {
+
 }
 
 /**
@@ -46,9 +48,9 @@ ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
 }
 
 /**
- * Only a single constructor that takes an initial capacity for the table is
- * necessary. If no capacity is given, it defaults to 8 initially
- */
+* Only a single constructor that takes an initial capacity for the table is
+* necessary. If no capacity is given, it defaults to 8 initially
+*/
 HashTable::HashTable(size_t initCapacity) {
 }
 
@@ -91,11 +93,11 @@ optional<size_t> HashTable::get(const string &key) const {
 * The bracket operator lets us access values in the map using a familiar syntax,
 * similar to C++ std::map or Python dictionaries. It behaves like get, returnin
 * the value associated with a given key:
- int idNum = hashTable[“James”];
+* int idNum = hashTable[“James”];
 * Unlike get, however, the bracker operator returns a reference to the value,
 * which allows assignment:
- hashTable[“James”] = 1234;
- If the key is not
+* hashTable[“James”] = 1234;
+* If the key is not
 * in the table, returning a valid reference is impossible. You may choose to
 * throw an exception in this case, but for our implementation, the situation
 * results in undefined behavior. Simply put, you do not need to address attempts
@@ -117,8 +119,8 @@ vector<string> HashTable::keys() const {
 * alpha returns a double,make sure to properly cast the size and capacity, which
 * are size_t, to avoid size_teger division. You can cast a size_t num to a double
 * in C++ like:
- static_cast<double>(num)
- The time complexity
+* static_cast<double>(num)
+* The time complexity
 * for this method must be O(1).
 */
 double HashTable::alpha() const {
@@ -144,17 +146,17 @@ size_t HashTable::size() const {
 * but not the definition. In addition, operator<< is not a method of HashTable,
 * so do not put HashTable:: before it when defining it. operator<< will allow us
 * to print the contents of our hash table using the normal syntax:
- cout <<
+* cout <<
 * myHashTable << endl;
- You should only print the buckets which are occupied,
+* You should only print the buckets which are occupied,
 * and along with each item you will print which bucket (the index of the bucket)
 * the item is in. To make it easy, I suggest creating a helper method called
 * something like printMe() that returns a string of everything in the table. An
 * example which uses open addressing for collision resolution could print
 * something like:
- Bucket 5: <James, 4815>
- Bucket 2: <Juliet, 1623>
- Bucket
+* Bucket 5: <James, 4815>
+* Bucket 2: <Juliet, 1623>
+* Bucket
 * 11: <Hugo, 42108>
 */
 ostream &operator<<(ostream &os, const HashTable &hashTable) {
