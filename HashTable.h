@@ -14,10 +14,18 @@
 #include <optional>
 using namespace std;
 
+//bt = Bucket Type
+//ESS = Empty Since Start, EAR = Empty After Removal, N = Normal
+enum bt {ESS, EAR, N};
+
 class HashTableBucket {
 private:
 
 public:
+    string Key;
+    size_t Value;
+    bt BucketType;
+
     HashTableBucket();
     HashTableBucket(const string& key, const size_t& value);
     void load(const std::string& key, const size_t& value);
@@ -27,6 +35,9 @@ public:
 };
 class HashTable {
 private:
+    size_t Size;
+    vector<HashTableBucket> Map;
+    vector<size_t> PRProbe;
 
 public:
     HashTable(size_t initCapacity = 8);

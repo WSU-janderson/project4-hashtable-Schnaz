@@ -8,21 +8,24 @@
 */
 
 #include "HashTable.h"
-
+#include <iostream>;
 
 /*
 * The default constructor can simply set the bucket type to ESS.
 *
 */
-HashTableBucket::HashTableBucket() {
-
+HashTableBucket::HashTableBucket() : BucketType(ESS) {
+    Key = "";
+    Value = 0;
 }
 
 /*
 * A parameterized constructor could initialize the key and value, as
 * well as set the bucket type to NORMAL.
 */
-HashTableBucket::HashTableBucket(const string &key, const size_t &value) {
+HashTableBucket::HashTableBucket(const string &key, const size_t &value) : BucketType(N) {
+    this->Value = value;
+    this->Key = key;
 }
 
 /*
@@ -30,6 +33,9 @@ HashTableBucket::HashTableBucket(const string &key, const size_t &value) {
 * should then also mark the bucket as NORMAL.
 */
 void HashTableBucket::load(const std::string &key, const size_t &value) {
+    this->Value = value;
+    this->Key = key;
+    BucketType = N;
 }
 
 /*
@@ -37,6 +43,7 @@ void HashTableBucket::load(const std::string &key, const size_t &value) {
 * if it has had data placed in it or not.
 */
 bool HashTableBucket::isEmpty() const {
+    return !(BucketType-1);
 }
 
 /*
@@ -45,6 +52,7 @@ bool HashTableBucket::isEmpty() const {
 * instead.
 */
 ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
+
 }
 
 /*
@@ -52,6 +60,13 @@ ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
 * necessary. If no capacity is given, it defaults to 8 initially
 */
 HashTable::HashTable(size_t initCapacity) {
+    Size = initCapacity;
+    vector<size_t> TempVector;
+    for(size_t i = 0; i < Size-1; i++) {
+        Map.emplace_back();
+        PRProbe.insert(PRProbe.begin() + rand() % (i+1), i+1);
+    }
+    Map.emplace_back();
 }
 
 /*
@@ -61,6 +76,12 @@ HashTable::HashTable(size_t initCapacity) {
 * should return false
 */
 bool HashTable::insert(const string &key, const size_t &value) {
+    size_t i = 0;
+    do
+    {
+        PRProbe[i % Size]
+    }
+    while() //FIXME
 }
 
 /*
