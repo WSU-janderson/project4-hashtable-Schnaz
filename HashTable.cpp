@@ -8,7 +8,7 @@
 */
 
 #include "HashTable.h"
-#include <iostream>;
+#include <iostream>
 
 /* HashTableBucket()
 * The default constructor with default bucket type of ESS.
