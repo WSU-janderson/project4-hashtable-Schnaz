@@ -36,7 +36,7 @@ public:
 class HashTable {
 private:
     size_t Size;
-    size_t Capacity;
+    size_t Alpha;
     vector<HashTableBucket> Map;
     vector<size_t> PRProbe;
 

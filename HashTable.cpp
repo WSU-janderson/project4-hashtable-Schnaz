@@ -187,7 +187,8 @@ size_t& HashTable::operator[](const string &key) {
 vector<string> HashTable::keys() const {
     vector<string> Keys;
     for (size_t i=0; i < Size; i++) {
-        Keys.push_back(Map[i].Key);
+        if (Map[i].BucketType == N) Keys.push_back(Map[i].Key);
+        else Keys.push_back("");
     }
     return Keys;
 }
@@ -202,6 +203,7 @@ vector<string> HashTable::keys() const {
 * for this method must be O(1).
 */
 double HashTable::alpha() const {
+    return Alpha;
 }
 
 /*
@@ -209,6 +211,7 @@ double HashTable::alpha() const {
 * complexity for this algorithm must be O(1).
 */
 size_t HashTable::capacity() const {
+    return Size
 }
 
 /*
