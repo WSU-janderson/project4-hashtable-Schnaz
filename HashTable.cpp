@@ -81,13 +81,17 @@ bool HashTable::insert(const string &key, const size_t &value) {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Size;
-        if (Map[Probe].Key == key) break;
-        if (Map[Probe].BucketType - 1) i++;
+        if (Map[Probe].BucketType - 1) {
+            if (Map[Probe].Key == key) return false;
+            i++;
+        }
         else {
             Map[Probe].load(key, value);
+            return true;
         }
     }
     while(i < Size);
+    return false;
 }
 
 /*
@@ -99,12 +103,15 @@ bool HashTable::remove(const string &key) {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Size;
-        if (Map[Probe].Key == key) {
+        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) {
             Map[Probe].BucketType = EAR;
+            return true;
         }
-        else i++;
+        if (!Map[Probe].BucketType) return false;
+        i++;
     }
     while(i < Size);
+    return false;
 }
 
 /*
@@ -112,6 +119,16 @@ bool HashTable::remove(const string &key) {
 * the table.
 */
 bool HashTable::contains(const string &key) const {
+    hash<string> hash;
+    size_t i = 0;
+    do {
+        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return true;
+        if (!Map[Probe].BucketType) return false;
+        i++;
+    }
+    while(i < Size);
+    return false;
 }
 
 /*
@@ -124,6 +141,16 @@ bool HashTable::contains(const string &key) const {
 * exception if the key is not found.
 */
 optional<size_t> HashTable::get(const string &key) const {
+    hash<string> hash;
+    size_t i = 0;
+    do {
+        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return Map[Probe].Value;
+        if (!Map[Probe].BucketType) return nullopt;
+        i++;
+    }
+    while(i < Size);
+    return nullopt;
 }
 
 /*
@@ -140,7 +167,16 @@ optional<size_t> HashTable::get(const string &key) const {
 * results in undefined behavior. Simply put, you do not need to address attempts
 * to access keys not in the table inside the bracket operator method.
 */
-size_t &HashTable::operator[](const string &key) {
+size_t& HashTable::operator[](const string &key) {
+    hash<string> hash;
+    size_t i = 0;
+    do {
+        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return Map[Probe].Value;
+        if (!Map[Probe].BucketType) break;
+        i++;
+    }
+    while(i < Size);
 }
 
 /*
