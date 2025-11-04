@@ -52,6 +52,7 @@ public:
     double alpha() const;
     size_t capacity() const;
     size_t size() const;
+    void resize();
     friend ostream& operator<<(ostream& os, const HashTable& hashTable);
 
 };

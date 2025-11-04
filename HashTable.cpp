@@ -43,7 +43,7 @@ void HashTableBucket::load(const std::string &key, const size_t &value) {
 * if it has had data placed in it or not.
 */
 bool HashTableBucket::isEmpty() const {
-    return !(BucketType-1);
+    return !(BucketType-1 > 0);
 }
 
 /*
@@ -53,6 +53,7 @@ bool HashTableBucket::isEmpty() const {
 */
 ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
 os << "<" << bucket.Key << ", " << bucket.Value << ">";
+return os;
 }
 
 /*
@@ -81,13 +82,14 @@ bool HashTable::insert(const string &key, const size_t &value) {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
-        if (Map[Probe].BucketType - 1) {
+        if (Map[Probe].BucketType == 2) {
             if (Map[Probe].Key == key) return false;
             i++;
         }
         else {
             Map[Probe].load(key, value);
             Size++;
+            if (alpha()>=0.5) resize();
             return true;
         }
     }
@@ -104,12 +106,12 @@ bool HashTable::remove(const string &key) {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
-        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) {
+        if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) {
             Map[Probe].BucketType = EAR;
             Size--;
             return true;
         }
-        if (!Map[Probe].BucketType) return false;
+        if (Map[Probe].BucketType == 0) return false;
         i++;
     }
     while(i < Capacity);
@@ -125,8 +127,8 @@ bool HashTable::contains(const string &key) const {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
-        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return true;
-        if (!Map[Probe].BucketType) return false;
+        if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) return true;
+        if (Map[Probe].BucketType == 0) return false;
         i++;
     }
     while(i < Capacity);
@@ -147,8 +149,8 @@ optional<size_t> HashTable::get(const string &key) const {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
-        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return Map[Probe].Value;
-        if (!Map[Probe].BucketType) return nullopt;
+        if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) return Map[Probe].Value;
+        if (Map[Probe].BucketType == 0) return nullopt;
         i++;
     }
     while(i < Capacity);
@@ -174,8 +176,8 @@ size_t& HashTable::operator[](const string &key) {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
-        if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return Map[Probe].Value;
-        if (!Map[Probe].BucketType) break;
+        if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) return Map[Probe].Value;
+        if (Map[Probe].BucketType == 0) break;
         i++;
     }
     while(i < Capacity);
@@ -225,6 +227,23 @@ size_t HashTable::size() const {
 }
 
 /*
+ *
+ *
+ *
+ */
+void HashTable::resize() {
+    HashTable Temp = HashTable(Capacity * 2);
+    for (size_t i = 0; i < Capacity; i++) {
+        if (Map[i].BucketType == 2) {
+            Temp.insert(Map[i].Key, Map[i].Value);
+        }
+    }
+    Map=Temp.Map;
+    PRProbe=Temp.PRProbe;
+    Capacity=Temp.Capacity;
+}
+
+/*
 * operator<< is another example of operator overloading in C++, similar to
 * operator[]. The friend keyword only needs to appear in the class declaration,
 * but not the definition. In addition, operator<< is not a method of HashTable,
@@ -245,6 +264,7 @@ size_t HashTable::size() const {
 */
 ostream &operator<<(ostream &os, const HashTable &hashTable) {
     for (size_t i = 0; i < hashTable.capacity(); i++) {
-        if (hashTable.Map[i].BucketType - 1) os << "Bucket " << i << ": " << hashTable.Map[i] << endl;
+        if (hashTable.Map[i].BucketType == 2) os << "Bucket " << i << ": " << hashTable.Map[i] << endl;
     }
+    return os;
 }

@@ -8,7 +8,26 @@
  */
 #include <iostream>
 
+#include "HashTable.h"
+
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+    cout << "Its testing time!" << endl;
+    HashTable Bob = HashTable(8);
+    Bob.insert("AAA", 1);
+    cout << Bob << endl;
+    Bob.insert("BBB", 2);
+    cout << Bob << endl;
+    Bob.insert("CCC", 3);
+    cout << Bob << endl;
+    Bob.insert("DDD", 4);
+    cout << Bob << endl;
+    Bob.insert("EEE", 5);
+    cout << Bob << endl;
+    Bob.insert("FFF", 5);
+    cout << Bob << endl;
+    Bob.insert("GGG", 5);
+    cout << Bob << endl;
+    Bob.remove("AAA");
+    cout << Bob << endl;
     return 0;
 }
