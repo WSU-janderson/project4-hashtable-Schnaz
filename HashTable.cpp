@@ -52,7 +52,7 @@ bool HashTableBucket::isEmpty() const {
 * instead.
 */
 ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
-
+os << "<" << bucket.Key << ", " << bucket.Value << ">";
 }
 
 /*
@@ -205,8 +205,7 @@ vector<string> HashTable::keys() const {
 * for this method must be O(1).
 */
 double HashTable::alpha() const {
-    double Siz = Size;
-    return Siz/Capacity;
+    return static_cast<double>(Size)/Capacity;
 }
 
 /*
@@ -245,4 +244,7 @@ size_t HashTable::size() const {
 * 11: <Hugo, 42108>
 */
 ostream &operator<<(ostream &os, const HashTable &hashTable) {
+    for (size_t i = 0; i < hashTable.capacity(); i++) {
+        if (hashTable.Map[i].BucketType - 1) os << "Bucket " << i << ": " << hashTable.Map[i] << endl;
+    }
 }

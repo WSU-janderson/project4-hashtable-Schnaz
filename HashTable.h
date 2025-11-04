@@ -38,10 +38,10 @@ private:
     size_t Alpha;
     size_t Capacity;
     size_t Size;
-    vector<HashTableBucket> Map;
     vector<size_t> PRProbe;
 
 public:
+    vector<HashTableBucket> Map;
     HashTable(size_t initCapacity = 8);
     bool insert(const string& key, const size_t& value);
     bool remove(const string& key);
