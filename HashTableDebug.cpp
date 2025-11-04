@@ -10,7 +10,8 @@
 
 #include "HashTable.h"
 
-int main() {
+int main()
+{
     cout << "Its testing time!" << endl;
 
     //create default hash table
@@ -39,7 +40,7 @@ int main() {
     cout << Bob << endl;
 
     //testing if duplicate elements appear
-    Bob.insert("AAA",9);
+    Bob.insert("AAA", 9);
     cout << Bob << endl;
     return 0;
 }
