@@ -12,22 +12,34 @@
 
 int main() {
     cout << "Its testing time!" << endl;
-    HashTable Bob = HashTable(8);
+
+    //create default hash table
+    HashTable Bob = HashTable();
+
+    //insert values checking hash table after each addition
     Bob.insert("AAA", 1);
     cout << Bob << endl;
     Bob.insert("BBB", 2);
     cout << Bob << endl;
     Bob.insert("CCC", 3);
     cout << Bob << endl;
+
+    //testing if hash table will resize once
     Bob.insert("DDD", 4);
     cout << Bob << endl;
     Bob.insert("EEE", 5);
     cout << Bob << endl;
-    Bob.insert("FFF", 5);
+    Bob.insert("FFF", 6);
     cout << Bob << endl;
-    Bob.insert("GGG", 5);
+    Bob.insert("GGG", 7);
     cout << Bob << endl;
-    Bob.remove("AAA");
+
+    //testing if hash table will resize twice
+    Bob.insert("HHH", 8);
+    cout << Bob << endl;
+
+    //testing if duplicate elements appear
+    Bob.insert("AAA",9);
     cout << Bob << endl;
     return 0;
 }
