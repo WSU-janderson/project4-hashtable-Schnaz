@@ -81,12 +81,13 @@ bool HashTable::insert(const string &key, const size_t &value) {
     size_t i = 0;
     do {
         size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        if (Map[Probe].Key == key) break;
         if (Map[Probe].BucketType - 1) i++;
         else {
             Map[Probe].load(key, value);
         }
     }
-    while(i);
+    while(i < Size);
 }
 
 /*
@@ -94,6 +95,16 @@ bool HashTable::insert(const string &key, const size_t &value) {
 * table. This might just be marking a bucket as empty-after-remove
 */
 bool HashTable::remove(const string &key) {
+    hash<string> hash;
+    size_t i = 0;
+    do {
+        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        if (Map[Probe].Key == key) {
+            Map[Probe].BucketType = EAR;
+        }
+        else i++;
+    }
+    while(i < Size);
 }
 
 /*
