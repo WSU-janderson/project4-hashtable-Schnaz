@@ -185,6 +185,11 @@ size_t& HashTable::operator[](const string &key) {
 * the same as the size of the hash table.
 */
 vector<string> HashTable::keys() const {
+    vector<string> Keys;
+    for (size_t i=0; i < Size; i++) {
+        Keys.push_back(Map[i].Key);
+    }
+    return Keys;
 }
 
 /*
