@@ -59,10 +59,10 @@ ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
 * Only a single constructor that takes an initial capacity for the table is
 * necessary. If no capacity is given, it defaults to 8 initially
 */
-HashTable::HashTable(size_t initCapacity) {
-    Size = initCapacity;
+HashTable::HashTable(size_t initCapacity) : Size(0) {
+    Capacity = initCapacity;
     vector<size_t> TempVector;
-    for(size_t i = 0; i < Size-1; i++) {
+    for(size_t i = 0; i < Capacity-1; i++) {
         Map.emplace_back();
         PRProbe.insert(PRProbe.begin() + rand() % (i+1), i+1);
     }
@@ -80,17 +80,18 @@ bool HashTable::insert(const string &key, const size_t &value) {
     hash<string> hash;
     size_t i = 0;
     do {
-        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType - 1) {
             if (Map[Probe].Key == key) return false;
             i++;
         }
         else {
             Map[Probe].load(key, value);
+            Size++;
             return true;
         }
     }
-    while(i < Size);
+    while(i < Capacity);
     return false;
 }
 
@@ -102,15 +103,16 @@ bool HashTable::remove(const string &key) {
     hash<string> hash;
     size_t i = 0;
     do {
-        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType-1 && Map[Probe].Key == key) {
             Map[Probe].BucketType = EAR;
+            Size--;
             return true;
         }
         if (!Map[Probe].BucketType) return false;
         i++;
     }
-    while(i < Size);
+    while(i < Capacity);
     return false;
 }
 
@@ -122,12 +124,12 @@ bool HashTable::contains(const string &key) const {
     hash<string> hash;
     size_t i = 0;
     do {
-        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return true;
         if (!Map[Probe].BucketType) return false;
         i++;
     }
-    while(i < Size);
+    while(i < Capacity);
     return false;
 }
 
@@ -144,12 +146,12 @@ optional<size_t> HashTable::get(const string &key) const {
     hash<string> hash;
     size_t i = 0;
     do {
-        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return Map[Probe].Value;
         if (!Map[Probe].BucketType) return nullopt;
         i++;
     }
-    while(i < Size);
+    while(i < Capacity);
     return nullopt;
 }
 
@@ -171,12 +173,12 @@ size_t& HashTable::operator[](const string &key) {
     hash<string> hash;
     size_t i = 0;
     do {
-        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType-1 && Map[Probe].Key == key) return Map[Probe].Value;
         if (!Map[Probe].BucketType) break;
         i++;
     }
-    while(i < Size);
+    while(i < Capacity);
 }
 
 /*
@@ -186,7 +188,7 @@ size_t& HashTable::operator[](const string &key) {
 */
 vector<string> HashTable::keys() const {
     vector<string> Keys;
-    for (size_t i=0; i < Size; i++) {
+    for (size_t i=0; i < Capacity; i++) {
         if (Map[i].BucketType == N) Keys.push_back(Map[i].Key);
         else Keys.push_back("");
     }
@@ -203,7 +205,8 @@ vector<string> HashTable::keys() const {
 * for this method must be O(1).
 */
 double HashTable::alpha() const {
-    return Alpha;
+    double Siz = Size;
+    return Siz/Capacity;
 }
 
 /*
@@ -211,7 +214,7 @@ double HashTable::alpha() const {
 * complexity for this algorithm must be O(1).
 */
 size_t HashTable::capacity() const {
-    return Size
+    return Capacity;
 }
 
 /*
@@ -219,6 +222,7 @@ size_t HashTable::capacity() const {
 * time complexity for this method must be O(1)
 */
 size_t HashTable::size() const {
+    return Size;
 }
 
 /*
