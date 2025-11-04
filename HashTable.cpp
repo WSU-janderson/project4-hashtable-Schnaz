@@ -67,6 +67,7 @@ HashTable::HashTable(size_t initCapacity) {
         PRProbe.insert(PRProbe.begin() + rand() % (i+1), i+1);
     }
     Map.emplace_back();
+    PRProbe.insert(PRProbe.begin(), 0);
 }
 
 /*
@@ -76,12 +77,16 @@ HashTable::HashTable(size_t initCapacity) {
 * should return false
 */
 bool HashTable::insert(const string &key, const size_t &value) {
+    hash<string> hash;
     size_t i = 0;
-    do
-    {
-        PRProbe[i % Size]
+    do {
+        size_t Probe = (hash(key) + PRProbe[i]) % Size;
+        if (Map[Probe].BucketType - 1) i++;
+        else {
+            Map[Probe].load(key, value);
+        }
     }
-    while() //FIXME
+    while(i);
 }
 
 /*
