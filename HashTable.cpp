@@ -10,27 +10,26 @@
 #include "HashTable.h"
 #include <iostream>;
 
-/*
-* The default constructor can simply set the bucket type to ESS.
-*
+/* HashTableBucket()
+* The default constructor with default bucket type of ESS.
 */
 HashTableBucket::HashTableBucket() : BucketType(ESS) {
     Key = "";
     Value = 0;
 }
 
-/*
-* A parameterized constructor could initialize the key and value, as
-* well as set the bucket type to NORMAL.
+/* HashTableBucket(key, value)
+* A parameterized constructor to initialize the key and value,
+* sets bucket type to NORMAL by default.
 */
 HashTableBucket::HashTableBucket(const string &key, const size_t &value) : BucketType(N) {
     this->Value = value;
     this->Key = key;
 }
 
-/*
-* A load method could load the key-value pair into the bucket, which
-* should then also mark the bucket as NORMAL.
+/* load(key, value)
+* A load method to load a key-value pair into a bucket,
+* marks the bucket's type as NORMAL.
 */
 void HashTableBucket::load(const std::string &key, const size_t &value) {
     this->Value = value;
@@ -38,31 +37,30 @@ void HashTableBucket::load(const std::string &key, const size_t &value) {
     BucketType = N;
 }
 
-/*
-* This method would return whether the bucket is empty, regardless of
+/* isEmpty()
+* This method will return whether the bucket is empty, regardless of
 * if it has had data placed in it or not.
 */
 bool HashTableBucket::isEmpty() const {
-    return !(BucketType-1 > 0);
+    return (BucketType < 2);
 }
 
-/*
-* The stream insertion operator could be overloaded to print the
-* bucket's contents. Or if preferred, you could write a print method
-* instead.
+/* operator<<bucket
+* overload of the stream insertion operator to print the bucket's contents.
 */
 ostream &operator<<(ostream &os, const HashTableBucket &bucket) {
 os << "<" << bucket.Key << ", " << bucket.Value << ">";
 return os;
 }
 
-/*
-* Only a single constructor that takes an initial capacity for the table is
-* necessary. If no capacity is given, it defaults to 8 initially
+/* HashTable(initCapacity)
+* default constructor for the HashTable class
+* initCapacity defaults to 8 if no value is entered
 */
 HashTable::HashTable(size_t initCapacity) : Size(0) {
     Capacity = initCapacity;
-    vector<size_t> TempVector;
+
+    //Fill the Hash table with empty buckets, while inserting the corresponding index to a random position in PRProbe
     for(size_t i = 0; i < Capacity-1; i++) {
         Map.emplace_back();
         PRProbe.insert(PRProbe.begin() + rand() % (i+1), i+1);
@@ -71,22 +69,25 @@ HashTable::HashTable(size_t initCapacity) : Size(0) {
     PRProbe.insert(PRProbe.begin(), 0);
 }
 
-/*
-* Insert a new key-value pair into the table. Duplicate keys are NOT allowed. The
-* method should return true if the insertion was successful. If the insertion was
-* unsucessful, such as when a duplicate is attempted to be inserted, the method
-* should return false
+/* insert(key, value)
+* Inserts a new key-value pair into the table. Duplicate keys are NOT allowed.
+* returns true if the insertion was successful. resizes the table if alpha is > 0.5.
 */
 bool HashTable::insert(const string &key, const size_t &value) {
+    // setup for hashing function
     hash<string> hash;
     size_t i = 0;
     do {
+        // run hashing function and check bucket type, incrementing i when a collision occurs
+        // and terminating if a duplicate key is found
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType == 2) {
             if (Map[Probe].Key == key) return false;
             i++;
         }
         else {
+            //load key/value pair into bucket and check if this brings the hash table over half capacity
+            //doubling it if thats the case
             Map[Probe].load(key, value);
             Size++;
             if (alpha()>=0.5) resize();
@@ -97,20 +98,22 @@ bool HashTable::insert(const string &key, const size_t &value) {
     return false;
 }
 
-/*
-* If the key is in the table, remove will “erase” the key-value pair from the
-* table. This might just be marking a bucket as empty-after-remove
+/* remove(key)
+* If the key is in the table, remove will “erase” the key-value pair from the table.
+* In this case, it just marks the bucket as empty (EAR)
 */
 bool HashTable::remove(const string &key) {
     hash<string> hash;
     size_t i = 0;
     do {
+        //mark bucket as empty after removal if matching key pair on a normal bucket is found
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) {
             Map[Probe].BucketType = EAR;
             Size--;
             return true;
         }
+        //check if bucket is empty since start, ending the loop prematurely if true;
         if (Map[Probe].BucketType == 0) return false;
         i++;
     }
@@ -118,14 +121,14 @@ bool HashTable::remove(const string &key) {
     return false;
 }
 
-/*
-* contains returns true if the key is in the table and false if the key is not in
-* the table.
+/* contains(key)
+* returns true if the key is in the table and false if it isn't.
 */
 bool HashTable::contains(const string &key) const {
     hash<string> hash;
     size_t i = 0;
     do {
+        //if matching key found, return true. If Empty Since Start bucket found, return false
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) return true;
         if (Map[Probe].BucketType == 0) return false;
@@ -135,19 +138,14 @@ bool HashTable::contains(const string &key) const {
     return false;
 }
 
-/*
-* If the key is found in the table, find will return the value associated with
-* that key. If the key is not in the table, find will return something called
-* nullopt, which is a special value in C++. The find method returns an
-* optional<int>, which is a way to denote a method might not have a valid value
-* to return. This approach is nicer than designating a special value, like -1, to
-* signify the return value is invalid. It's also much better than throwing an
-* exception if the key is not found.
+/* get(key)
+* returns value associated with the key if it is in the hash table, or returns nullopt if it is not.
 */
 optional<size_t> HashTable::get(const string &key) const {
     hash<string> hash;
     size_t i = 0;
     do {
+        //if matching key found, return value. If Empty Since Start bucket found, return nullopt
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) return Map[Probe].Value;
         if (Map[Probe].BucketType == 0) return nullopt;
@@ -157,24 +155,15 @@ optional<size_t> HashTable::get(const string &key) const {
     return nullopt;
 }
 
-/*
-* The bracket operator lets us access values in the map using a familiar syntax,
-* similar to C++ std::map or Python dictionaries. It behaves like get, returnin
-* the value associated with a given key:
-* int idNum = hashTable[“James”];
-* Unlike get, however, the bracker operator returns a reference to the value,
-* which allows assignment:
-* hashTable[“James”] = 1234;
-* If the key is not
-* in the table, returning a valid reference is impossible. You may choose to
-* throw an exception in this case, but for our implementation, the situation
-* results in undefined behavior. Simply put, you do not need to address attempts
-* to access keys not in the table inside the bracket operator method.
+/*operator[key]
+* returns a reference to the value associated with the key in the table.
+* no safeguards if the value is not within the table however.
 */
 size_t& HashTable::operator[](const string &key) {
     hash<string> hash;
     size_t i = 0;
     do {
+        //if matching key found, return value's reference. otherwise this will probably fail
         size_t Probe = (hash(key) + PRProbe[i]) % Capacity;
         if (Map[Probe].BucketType == 2 && Map[Probe].Key == key) return Map[Probe].Value;
         if (Map[Probe].BucketType == 0) break;
@@ -183,84 +172,65 @@ size_t& HashTable::operator[](const string &key) {
     while(i < Capacity);
 }
 
-/*
-* keys returns a std::vector (C++ version of ArrayList, or simply list/array)
-* with all of the keys currently in the table. The length of the vector should be
-* the same as the size of the hash table.
+/* keys()
+* returns all keys within the table inside a vector.
 */
 vector<string> HashTable::keys() const {
     vector<string> Keys;
     for (size_t i=0; i < Capacity; i++) {
+        // loop through Hash Table and push the keys into a vector
         if (Map[i].BucketType == N) Keys.push_back(Map[i].Key);
         else Keys.push_back("");
     }
     return Keys;
 }
 
-/*
-* alpha returns the current load factor of the table, or size/capacity. Since
-* alpha returns a double,make sure to properly cast the size and capacity, which
-* are size_t, to avoid size_teger division. You can cast a size_t num to a double
-* in C++ like:
-* static_cast<double>(num)
-* The time complexity
-* for this method must be O(1).
+/* alpha()
+* returns load factor for the HashTable. an alpha of 1/2 necessitates resizing.
 */
 double HashTable::alpha() const {
     return static_cast<double>(Size)/Capacity;
 }
 
-/*
-* capacity returns how many buckets in total are in the hash table. The time
-* complexity for this algorithm must be O(1).
+/* capacity()
+* returns capacity from Hashtable
 */
 size_t HashTable::capacity() const {
     return Capacity;
 }
 
-/*
-* The size method returns how many key-value pairs are in the hash table. The
-* time complexity for this method must be O(1)
+/* size()
+* returns size from Hashtable
 */
 size_t HashTable::size() const {
     return Size;
 }
 
-/*
- *
- *
- *
- */
+/* resize()
+* creates a hash table of double the size, and then adds all the buckets over one by one
+* then copies all the variables over to the one running the function.
+*/
 void HashTable::resize() {
+    // create temporary hash table of double size
     HashTable Temp = HashTable(Capacity * 2);
     for (size_t i = 0; i < Capacity; i++) {
+        // insert all non-empty buckets to temporary hash map
         if (Map[i].BucketType == 2) {
             Temp.insert(Map[i].Key, Map[i].Value);
         }
     }
+    // copy over all new values from temporary hash map
     Map=Temp.Map;
     PRProbe=Temp.PRProbe;
     Capacity=Temp.Capacity;
 }
 
-/*
-* operator<< is another example of operator overloading in C++, similar to
-* operator[]. The friend keyword only needs to appear in the class declaration,
-* but not the definition. In addition, operator<< is not a method of HashTable,
-* so do not put HashTable:: before it when defining it. operator<< will allow us
-* to print the contents of our hash table using the normal syntax:
-* cout <<
-* myHashTable << endl;
-* You should only print the buckets which are occupied,
-* and along with each item you will print which bucket (the index of the bucket)
-* the item is in. To make it easy, I suggest creating a helper method called
-* something like printMe() that returns a string of everything in the table. An
-* example which uses open addressing for collision resolution could print
-* something like:
-* Bucket 5: <James, 4815>
-* Bucket 2: <Juliet, 1623>
-* Bucket
-* 11: <Hugo, 42108>
+/* operator<<hashTable
+* overload of << operator to print out the contents of a hash table.
+* uses formating:
+* "Bucket 1: <value, key>"
+* "Bucket 3: <value, key>"
+* always in order
 */
 ostream &operator<<(ostream &os, const HashTable &hashTable) {
     for (size_t i = 0; i < hashTable.capacity(); i++) {

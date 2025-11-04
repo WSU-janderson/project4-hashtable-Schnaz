@@ -22,10 +22,11 @@ class HashTableBucket {
 private:
 
 public:
-    string Key;
-    size_t Value;
-    bt BucketType;
+    string Key; // a string to act as a key that will determine a unique position within the hash table
+    size_t Value; // a value to be stored alongside the key within the hash table
+    bt BucketType; // an enum to hold 3 different types: ESS, EAR, and N. Check enum above for reference
 
+    //public function declarations for the HashTableBucket Class, check HashTable.cpp for more details
     HashTableBucket();
     HashTableBucket(const string& key, const size_t& value);
     void load(const std::string& key, const size_t& value);
@@ -35,13 +36,14 @@ public:
 };
 class HashTable {
 private:
-    size_t Alpha;
-    size_t Capacity;
-    size_t Size;
-    vector<size_t> PRProbe;
+    size_t Capacity; // Current capacity of hash table
+    size_t Size; // Current number of buckets filled
+    vector<size_t> PRProbe; // Pseudo-Random Probe
 
 public:
-    vector<HashTableBucket> Map;
+    vector<HashTableBucket> Map; //the vector that holds the HashBuckets, made public to aid with printing via <<
+
+    //public function declarations for the HashTable Class, check HashTable.cpp for more details
     HashTable(size_t initCapacity = 8);
     bool insert(const string& key, const size_t& value);
     bool remove(const string& key);
